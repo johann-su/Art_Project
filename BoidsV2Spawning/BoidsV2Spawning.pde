@@ -1,46 +1,169 @@
 import org.openkinect.processing.*;
-import gab.opencv.*;
 
-// Kinect Library object
-Kinect2 kinect2;
-OpenCV opencv;
 Flock flock;
+KinectTracker tracker;
+
+// int screenX = 1440;
+int screenX = 1920;
+int speed = 0;
+int size = 5;
+int boidspeed = 5;
+float weight = 0.20;
+int amount = 400;
+int schwanz = 20;
+
+boolean display = true;
+boolean sparn = true;
+
+ArrayList<Boid> boids;
 
 void setup() {
-  size(800, 800, P3D);
-  
-  opencv = new OpenCV(this, 800, 800);
-  
+  fullScreen();
+  // size(1920,1080, P3D);
+  tracker = new KinectTracker(this);
   flock = new Flock();
-  
-  kinect2 = new Kinect2(this);
-  kinect2.initDepth();
-  kinect2.initDevice();
-  
   // Add an initial set of boids into the system
-  for (int i = 0; i < 500; i++) {
-    flock.addBoid(new Boid(width/2,height/2, -2000));
+  for (int i = 0; i < 1; i++) {
+    flock.addBoid(new Boid(width/2, height/2));
   }
 }
 
 void draw() {
   background(50);
+
+  tracker.track();
+  // Show the image
+  if (display) {
+
+    tracker.display();
+    fill(0, 255, 255);
+    text(frameRate, screenX-74, 15, 100);
+    text("size: " + size, screenX-70, 35, 100);
+    text("speed: " + boidspeed, screenX-70, 55, 100);
+    text("weight: " + weight, screenX-70, 75, 100);
+    text("tail: " + schwanz, screenX-70, 95, 100);
+    text("total: " + boids.size(), screenX-70, 115, 100);
+  }
+  PVector v1 = tracker.getLerpedPos();
+
+  // println("depth", v1.z);
+  fill(50, 100, 250, 200);
+  noStroke();
+  if (sparn) {
+    ellipse((v1.x*-4)+ screenX, v1.y*4, 20, 20);
+  }
+  //  println("wert",Math.round(map(v1.z,500,tracker.getThreshold(),6,0)));
+  speed += Math.round(map(v1.z, 500, tracker.getThreshold(), 100, 0));
+  if (speed >= 70) {
+    if ((v1.x*-3)+ screenX == 1440 && v1.y*3 == 0) {
+    } else {
+
+      if (sparn) {
+        flock.addBoid(new Boid((v1.x*-4)+ screenX, v1.y*4));
+      }
+    }
+    if (flock.amount() > amount) {    
+      while (amount < flock.amount()) {
+        flock.deleteBoid();
+      }
+    }
+    speed = 0;
+  }
+
+
   flock.run();
 }
 
+// Adjust the threshold with key presses
+void keyPressed() {
+  int t = tracker.getThreshold();
+  if (key == CODED) {
+    if (keyCode == UP) {
+      t +=5;
+      tracker.setThreshold(t);
+    } else if (keyCode == DOWN) {
+      t -=5;
+      tracker.setThreshold(t);
+    } else if (keyCode == RIGHT) {
+      display = true;
+    } else if (keyCode == LEFT) {
+      display = false;
+    }
+  } else {
+    //println("key: ", key);
+    if (key == '1') {
+      //print("up");
+      size -= 1;
+      for (Boid b : boids) {
+        b.r -= 1;
+      }
+    } else if (key == '2') {
+      size += 1;
+      for (Boid b : boids) {
+        b.r += 1;
+      }
+    } else if (key == '3') {
+      boidspeed -= 1;
+      for (Boid b : boids) {
+        b.maxspeed -= 1;
+      }
+    } else if (key == '4') {
+      boidspeed += 1;
+      for (Boid b : boids) {
+        b.maxspeed += 1;
+      }
+    } else if (key == '5') {
+      weight -= 0.10;
+      for (Boid b : boids) {
+        b.maxforce -= 0.10;
+      }
+    } else if (key == '6') {
+      weight += 0.10;
+      for (Boid b : boids) {
+        b.maxforce += 0.10;
+      }
+    } else if (key == '7') {
+      if (amount <= 50) {
+      } else {
+        amount -= 50;
+        println("amount: ", amount);
+      }
+    } else if (key == '8') {
+      print("Hallo es geht");
+      amount += 50;
+    } else if (key == '9') {
+      schwanz -= 2;
+    } else if (key == '0') {
+      schwanz += 2;
+    }
+    // stop sparning
+    else if (key == 'q') {
+      sparn = !sparn;
+    } else if (key == ' ') {
+      size = 5;
+      boidspeed = 5;
+      weight = 0.20;
+      schwanz = 20;
+      boids.clear();
+    } else {
+    }
+  }
+}
 // Add a new boid into the System
-
-// void mousePressed() {
-//   flock.addBoid(new Boid(mouseX,mouseY));
-// }
-
-
+void mousePressed() {
+  for (int i=0; i < 40; i++) {
+    flock.addBoid(new Boid(mouseX, mouseY));
+    if (flock.amount() > amount) {
+      flock.deleteBoid();
+    }
+  }
+}
 
 // The Flock (a list of Boid objects)
 
 class Flock {
-  ArrayList<Boid> boids; // An ArrayList for all the boids
-
+  // An ArrayList for all the boids
+  // ArrayList<Boid> boids;
   Flock() {
     boids = new ArrayList<Boid>(); // Initialize the ArrayList
   }
@@ -53,6 +176,16 @@ class Flock {
 
   void addBoid(Boid b) {
     boids.add(b);
+  }
+
+  void deleteBoid() {
+    if (boids.size() <= 1) {
+    } else {
+      boids.remove(1);
+    }
+  }
+  int amount() {
+    return boids.size();
   }
 }
 
@@ -67,11 +200,12 @@ class Boid {
   PVector velocity;
   PVector acceleration;
   float r;
-  float maxforce;    // Maximum steering force
-  float maxspeed;    // Maximum speed
+  float maxforce;           // Maximum steering force
+  float maxspeed;           // Maximum speed
+  ArrayList<PVector> trail = new ArrayList<PVector>(); // a colored trail
 
-    Boid(float x, float y, float z) {
-    acceleration = new PVector(0, 0, 0);
+  Boid(float x, float y) {
+    acceleration = new PVector(0, 0);
 
     // This is a new PVector method not yet implemented in JS
     // velocity = PVector.random2D();
@@ -79,11 +213,10 @@ class Boid {
     // Leaving the code temporarily this way so that this example runs in JS
     float angle = random(TWO_PI);
     velocity = new PVector(cos(angle), sin(angle));
-
-    position = new PVector(x, y, z);
-    r = 2.0;
-    maxspeed = 7;
-    maxforce = 0.12;
+    position = new PVector(x, y);
+    r = size;
+    maxspeed = boidspeed;
+    maxforce = weight;
   }
 
   void run(ArrayList<Boid> boids) {
@@ -113,13 +246,46 @@ class Boid {
     applyForce(coh);
   }
 
+  void drawTail(ArrayList<PVector> positions) {
+    int i = 1;
+    for (PVector p : positions) {
+      if ((i % 2) ==0) {
+        if (i < 10) {
+          noStroke();
+          fill(255, 0, 255, map(i, 0, 10, 0, 255));
+          ellipse(p.x, p.y, r, r);
+        } else {
+          noStroke();
+          fill(255, 0, 255);
+          ellipse(p.x, p.y, r, r);
+        }
+        // translate(p.x, p.y);
+        // println("position: ", p);
+      }
+      //  println("i: ", i);
+      i ++;
+    }
+  }
+
   // Method to update position
   void update() {
     // Update velocity
     velocity.add(acceleration);
     // Limit speed
     velocity.limit(maxspeed);
+    // add position to trail 
     position.add(velocity);
+
+    trail.add(new PVector(position.x, position.y));
+    // cut tail if size is to long
+    if (trail.size() > schwanz) {
+      trail.remove(0);
+    }
+    //draw tail
+    drawTail(trail);
+
+
+
     // Reset accelertion to 0 each cycle
     acceleration.mult(0);
   }
@@ -146,11 +312,11 @@ class Boid {
     // Draw a triangle rotated in the direction of velocity
     float theta = velocity.heading2D() + radians(90);
     // heading2D() above is now heading() but leaving old syntax until Processing.js catches up
-    
+
     fill(200, 100);
     stroke(255);
     pushMatrix();
-    translate(position.x, position.y, position.z);
+    translate(position.x, position.y);
     rotate(theta);
     beginShape(TRIANGLES);
     vertex(0, -r*2);
@@ -232,8 +398,7 @@ class Boid {
       PVector steer = PVector.sub(sum, velocity);
       steer.limit(maxforce);
       return steer;
-    } 
-    else {
+    } else {
       return new PVector(0, 0);
     }
   }
@@ -254,8 +419,7 @@ class Boid {
     if (count > 0) {
       sum.div(count);
       return seek(sum);  // Steer towards the position
-    } 
-    else {
+    } else {
       return new PVector(0, 0);
     }
   }
