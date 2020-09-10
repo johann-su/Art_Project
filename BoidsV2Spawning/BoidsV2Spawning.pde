@@ -4,7 +4,7 @@ Flock flock;
 KinectTracker tracker;
 
 // int screenX = 1440;
-int screenX = 1920;
+int screenX = 1250;
 int speed = 0;
 int size = 5;
 int boidspeed = 5;
@@ -18,7 +18,7 @@ boolean sparn = true;
 ArrayList<Boid> boids;
 
 void setup() {
-  fullScreen();
+  fullScreen(P3D);
   // size(1920,1080, P3D);
   tracker = new KinectTracker(this);
   flock = new Flock();
@@ -37,12 +37,12 @@ void draw() {
 
     tracker.display();
     fill(0, 255, 255);
-    text(frameRate, screenX-74, 15, 100);
-    text("size: " + size, screenX-70, 35, 100);
-    text("speed: " + boidspeed, screenX-70, 55, 100);
-    text("weight: " + weight, screenX-70, 75, 100);
-    text("tail: " + schwanz, screenX-70, 95, 100);
-    text("total: " + boids.size(), screenX-70, 115, 100);
+    text(frameRate, screenX-70, 75, 100);
+    text("size: " + size, screenX-70, 95, 100);
+    text("speed: " + boidspeed, screenX-70, 115, 100);
+    text("weight: " + weight, screenX-70, 135, 100);
+    text("tail: " + schwanz, screenX-70, 155, 100);
+    text("total: " + boids.size(), screenX-70, 175, 100);
   }
   PVector v1 = tracker.getLerpedPos();
 
