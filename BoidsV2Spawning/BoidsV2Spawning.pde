@@ -11,9 +11,16 @@ int boidspeed = 5;
 float weight = 0.20;
 int amount = 400;
 int schwanz = 20;
+int speedAuto = 0;
+int weightAuto = 0;
+int schwanzAuto = 0;
+
+int timer;
+int timer2;
 
 boolean display = true;
 boolean sparn = true;
+boolean radomMode = false;
 
 ArrayList<Boid> boids;
 
@@ -34,7 +41,6 @@ void draw() {
   tracker.track();
   // Show the image
   if (display) {
-
     tracker.display();
     fill(0, 255, 255);
     text(frameRate, screenX-70, 75, 100);
@@ -69,7 +75,45 @@ void draw() {
     }
     speed = 0;
   }
-
+  // if this mode is enabled, the boids are getting radoms specs
+  if(millis() > time + 120000 && radomMode){
+    speedAuto = int(radom(1 , 5));
+    weightAuto = int(radom(1 , 50))
+    schwanzAuto = int(random(1, 50);)
+    time = millis()
+  }
+   if(millis() > time + 100 && radomMode){
+    int state = int(radom(0,1))
+    if(state && speedAuto >= 1){
+       for (Boid b : boids) {
+        b.maxspeed += 1;
+      }
+    }
+    if(state && speedAuto >= 1){
+       for (Boid b : boids) {
+        b.maxspeed -= 1;
+      }
+    }
+    int state = int(radom(0,1))
+    if(state && weightAuto >= 1){
+       for (Boid b : boids) {
+        b.maxforce += 0.10;
+      }
+    }
+    if(!state && weightAuto >= 1){
+       for (Boid b : boids) {
+        b.maxforce -= 0.10;
+      }
+    }
+    int state = int(radom(0,1))
+    if(state && schwanzAuto >= 1){
+      schwanz += 2
+    }
+    if(!state && schwanzAuto >= 1){
+      schwanz -= 2
+    }
+    time = millis()
+  }
 
   flock.run();
 }
@@ -145,6 +189,10 @@ void keyPressed() {
       weight = 0.20;
       schwanz = 20;
       boids.clear();
+    }
+    else if (key == 'a') {
+      // attetion do not know if that the right way of doing it
+     radomMode = !radomMode
     } else {
     }
   }
