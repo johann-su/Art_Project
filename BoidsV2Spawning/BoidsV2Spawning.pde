@@ -22,6 +22,8 @@ int timer2;
 boolean radomMode = false;
 // End autoMode requirements
 
+//trying to set the color for each tail
+color TailColor = color(255, 0, 255)
 
 boolean display = true;
 boolean sparn = true;
@@ -252,6 +254,7 @@ class Boid {
   float r;
   float maxforce;           // Maximum steering force
   float maxspeed;           // Maximum speed
+  color TailColorBoid;          // Color of the Tail
   ArrayList<PVector> trail = new ArrayList<PVector>(); // a colored trail
 
   Boid(float x, float y) {
@@ -267,6 +270,7 @@ class Boid {
     r = size;
     maxspeed = boidspeed;
     maxforce = weight;
+    TailColorBoid = TailColor;
   }
 
   void run(ArrayList<Boid> boids) {
@@ -302,11 +306,11 @@ class Boid {
       if ((i % 2) ==0) {
         if (i < 10) {
           noStroke();
-          fill(255, 0, 255, map(i, 0, 10, 0, 255));
+          fill(TailColorBoid, map(i, 0, 10, 0, 255));
           ellipse(p.x, p.y, r, r);
         } else {
           noStroke();
-          fill(255, 0, 255);
+          fill(TailColorBoid);
           ellipse(p.x, p.y, r, r);
         }
         // translate(p.x, p.y);
