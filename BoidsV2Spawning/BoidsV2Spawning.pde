@@ -14,9 +14,10 @@ int schwanz = 20;
 
 // All things for autoMode
 int speedAuto = 0;
-int weightAuto = 0;
+float weightAuto = 0;
 int schwanzAuto = 0;
-List states = [];
+int amountAuto;
+int[] states;
 int timer;
 int timer2;
 boolean radomMode = false;
@@ -80,42 +81,71 @@ void draw() {
     speed = 0;
   }
   // if this mode is enabled, the boids are getting radoms specs
-  if(millis() > time + 120000 && radomMode){
-    speedAuto = int(radom(1 , 5));
-    weightAuto = int(radom(1 , 50))
-    schwanzAuto = int(random(1, 50);)
-    states = [int(radom(0,1)), int(radom(0,1)), int(radom(0,1))]
-    time = millis()
+  if(millis() > timer + 5000 && radomMode){
+    speedAuto = int(random(1 , 5));
+    weightAuto = random(-1.5 , 0.7);
+    schwanzAuto = int(random(10, 100));
+    amountAuto = int(random(50, 250));
+    //states[0] = int(random(0,1));
+    //states[1] = int(random(0,1));
+    //states[2] = int(random(0,1));
+    timer = millis();
+    
+    for (Boid b : boids) {
+      b.maxspeed = speedAuto;
+      b.maxforce = weightAuto;
+    }
+    schwanz = schwanzAuto;
+    amount = amountAuto;
+    
+    for (int i=0; i < 2; i++) {
+      if (flock.amount() > amount) {
+        flock.deleteBoid();
+      } 
+      if (flock.amount() < amount) {
+        flock.addBoid(new Boid(random(0, screenX), random(0, 725)));
+      }
+    }
   }
-   if(millis() > time + 100 && radomMode){
-    if(!states[0] && speedAuto >= 1){
-       for (Boid b : boids) {
-        b.maxspeed += 1;
-      }
-    }
-    if(states[0] && speedAuto >= 1){
-       for (Boid b : boids) {
-        b.maxspeed -= 1;
-      }
-    }
-    if(states[1] && weightAuto >= 1){
-       for (Boid b : boids) {
-        b.maxforce += 0.10;
-      }
-    }
-    if(!states[1] && weightAuto >= 1){
-       for (Boid b : boids) {
-        b.maxforce -= 0.10;
-      }
-    }
-    if(states[2] && schwanzAuto >= 1){
-      schwanz += 2
-    }
-    if(!states[2] && schwanzAuto >= 1){
-      schwanz -= 2
-    }
-    time = millis()
-  }
+  // if(millis() > timer + 1000 && radomMode){
+  //  if(states[0] == 1 && speedAuto >= 1){
+  //     for (Boid b : boids) {
+  //      b.maxspeed += 1;
+  //    }
+      
+  //    speedAuto -= 1;
+  //  }
+  //  if(states[0] == 0 && speedAuto >= 1){
+  //     for (Boid b : boids) {
+  //      b.maxspeed -= 1;
+  //    }
+      
+  //    speedAuto -= 1;
+  //  }
+  //  if(states[1] == 1 && weightAuto >= 1){
+  //     for (Boid b : boids) {
+  //      b.maxforce += 0.10;
+  //    }
+      
+  //    weightAuto -= 1;
+  //  }
+  //  if(states[1] == 0 && weightAuto >= 1){
+  //     for (Boid b : boids) {
+  //      b.maxforce -= 0.10;
+  //    }
+      
+  //    weightAuto -= 1;
+  //  }
+  //  if(states[2] == 1 && schwanzAuto >= 1){
+  //    schwanz += 2;
+  //    schwanzAuto -= 1;
+  //  }
+  //  if(states[2] == 0 && schwanzAuto >= 1){
+  //    schwanz -= 2;
+  //    schwanzAuto -= 1;
+  //  }
+  //  timer = millis();
+  //}
 
   flock.run();
 }
@@ -194,7 +224,7 @@ void keyPressed() {
     }
     else if (key == 'a') {
       // attetion do not know if that the right way of doing it
-     radomMode = !radomMode
+     radomMode = !radomMode;
     } else {
     }
   }
