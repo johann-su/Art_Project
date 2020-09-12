@@ -23,7 +23,7 @@ boolean radomMode = false;
 // End autoMode requirements
 
 //trying to set the color for each tail
-color TailColor = color(255, 0, 255)
+color TailColorList = [color(255, 0, 255),color(20, 75, 200)]
 
 boolean display = true;
 boolean sparn = true;
@@ -270,7 +270,7 @@ class Boid {
     r = size;
     maxspeed = boidspeed;
     maxforce = weight;
-    TailColorBoid = TailColor;
+    TailColorBoid = TailColorList[int(radom(0,1))];
   }
 
   void run(ArrayList<Boid> boids) {
@@ -438,6 +438,7 @@ class Boid {
       if ((d > 0) && (d < neighbordist)) {
         sum.add(other.velocity);
         count++;
+        TailColorBoid = other.TailColorBoid;
       }
     }
     if (count > 0) {
