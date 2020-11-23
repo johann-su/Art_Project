@@ -30,6 +30,7 @@ boolean sparn = true;
 ArrayList<Boid> boids;
 
 void setup() {
+  frameRate(60);
   fullScreen(P3D);
   // size(1920,1080, P3D);
   tracker = new KinectTracker(this);
