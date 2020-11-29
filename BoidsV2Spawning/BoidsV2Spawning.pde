@@ -23,6 +23,9 @@ int timer2;
 boolean radomMode = false;
 // End autoMode requirements
 
+color boidColor = color(random(1, 255), random(1, 255), random(1, 255));
+color tailColor = color(random(1, 255), random(1, 255), random(1, 255));
+color backgroundColor = color(255, 255, 255);
 
 boolean display = true;
 boolean sparn = true;
@@ -32,6 +35,7 @@ ArrayList<Boid> boids;
 void setup() {
   frameRate(60);
   fullScreen(P3D);
+  
   // size(1920,1080, P3D);
   tracker = new KinectTracker(this);
   flock = new Flock();
@@ -42,7 +46,7 @@ void setup() {
 }
 
 void draw() {
-  background(50);
+  background(backgroundColor);
 
   tracker.track();
   // Show the image
@@ -69,7 +73,6 @@ void draw() {
   if (speed >= 70) {
     if ((v1.x*-3)+ screenX == 1440 && v1.y*3 == 0) {
     } else {
-
       if (sparn) {
         flock.addBoid(new Boid((v1.x*-4)+ screenX, v1.y*4));
       }
@@ -226,6 +229,9 @@ void keyPressed() {
     else if (key == 'a') {
       // attetion do not know if that the right way of doing it
      radomMode = !radomMode;
+    } else if (key == 'c') {
+      boidColor = color(random(1, 255), random(1, 255), random(1, 255));
+      tailColor = color(random(1, 255), random(1, 255), random(1, 255));
     } else {
     }
   }
@@ -333,11 +339,11 @@ class Boid {
       if ((i % 2) ==0) {
         if (i < 10) {
           noStroke();
-          fill(255, 0, 255, map(i, 0, 10, 0, 255));
+          fill(tailColor, map(i, 0, 10, 0, 255));
           ellipse(p.x, p.y, r, r);
         } else {
           noStroke();
-          fill(255, 0, 255);
+          fill(tailColor);
           ellipse(p.x, p.y, r, r);
         }
         // translate(p.x, p.y);
@@ -394,8 +400,8 @@ class Boid {
     float theta = velocity.heading2D() + radians(90);
     // heading2D() above is now heading() but leaving old syntax until Processing.js catches up
 
-    fill(200, 100);
-    stroke(255);
+    fill(boidColor, 100);
+    stroke(boidColor);
     pushMatrix();
     translate(position.x, position.y);
     rotate(theta);
