@@ -25,6 +25,8 @@ boolean radomMode = false;
 
 color boidColor = color(random(1, 255), random(1, 255), random(1, 255));
 color tailColor = color(random(1, 255), random(1, 255), random(1, 255));
+//color boidColor = color(0, 0, 0);
+//color tailColor = color(0, 0, 0);
 color backgroundColor = color(255, 255, 255);
 
 boolean display = true;
