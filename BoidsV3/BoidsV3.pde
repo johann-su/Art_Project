@@ -1,8 +1,8 @@
 import org.openkinect.processing.*;
 
 Flock flock;
-KinectTracker tracker;
 
+boolean linux = true;
 // int screenX = 1440;
 int screenX = 1250;
 int speed = 0;
@@ -23,23 +23,31 @@ int timer2;
 boolean radomMode = false;
 // End autoMode requirements
 
-color boidColor = color(random(1, 255), random(1, 255), random(1, 255));
-color tailColor = color(random(1, 255), random(1, 255), random(1, 255));
+color boidColor = color(200);
+color tailColor = color(255, 0, 255);
 //color boidColor = color(0, 0, 0);
 //color tailColor = color(0, 0, 0);
 color backgroundColor = color(255, 255, 255);
 
 boolean display = true;
 boolean sparn = true;
-
+int sparnCount = 40;
 ArrayList<Boid> boids;
 
+void settings() {
+  if(linux)
+  {
+    System.setProperty("jogl.disable.openglcore", "true");
+  }
+
+ fullScreen(P3D);
+}
+
 void setup() {
-  frameRate(60);
-  fullScreen(P3D);
+   frameRate(60);
   
   // size(1920,1080, P3D);
-  tracker = new KinectTracker(this);
+
   flock = new Flock();
   // Add an initial set of boids into the system
   for (int i = 0; i < 1; i++) {
@@ -48,12 +56,12 @@ void setup() {
 }
 
 void draw() {
-  background(backgroundColor);
+  background(0);
 
-  tracker.track();
+  
   // Show the image
   if (display) {
-    tracker.display();
+   
     fill(0, 255, 255);
     text(frameRate, screenX-70, 75, 100);
     text("size: " + size, screenX-70, 95, 100);
@@ -61,31 +69,16 @@ void draw() {
     text("weight: " + weight, screenX-70, 135, 100);
     text("tail: " + schwanz, screenX-70, 155, 100);
     text("total: " + boids.size(), screenX-70, 175, 100);
+    text("sparn: " + sparnCount, screenX-70, 195, 100);
   }
-  PVector v1 = tracker.getLerpedPos();
+  
 
   // println("depth", v1.z);
   fill(50, 100, 250, 200);
   noStroke();
-  if (sparn) {
-    ellipse((v1.x*-4)+ screenX, v1.y*4, 20, 20);
-  }
+
   //  println("wert",Math.round(map(v1.z,500,tracker.getThreshold(),6,0)));
-  speed += Math.round(map(v1.z, 500, tracker.getThreshold(), 100, 0));
-  if (speed >= 70) {
-    if ((v1.x*-3)+ screenX == 1440 && v1.y*3 == 0) {
-    } else {
-      if (sparn) {
-        flock.addBoid(new Boid((v1.x*-4)+ screenX, v1.y*4));
-      }
-    }
-    if (flock.amount() > amount) {    
-      while (amount < flock.amount()) {
-        flock.deleteBoid();
-      }
-    }
-    speed = 0;
-  }
+ 
   // if this mode is enabled, the boids are getting radoms specs
   if(millis() > timer + 5000 && radomMode){
     speedAuto = int(random(1 , 5));
@@ -158,14 +151,16 @@ void draw() {
 
 // Adjust the threshold with key presses
 void keyPressed() {
-  int t = tracker.getThreshold();
+ 
   if (key == CODED) {
     if (keyCode == UP) {
-      t +=5;
-      tracker.setThreshold(t);
+     sparnCount ++; 
+     
     } else if (keyCode == DOWN) {
-      t -=5;
-      tracker.setThreshold(t);
+    if(sparnCount >= 2){
+    sparnCount -= 1;
+    }
+     
     } else if (keyCode == RIGHT) {
       display = true;
     } else if (keyCode == LEFT) {
@@ -220,7 +215,7 @@ void keyPressed() {
     }
     // stop sparning
     else if (key == 'q') {
-      sparn = !sparn;
+      schwanz = 1000;
     } else if (key == ' ') {
       size = 5;
       boidspeed = 5;
@@ -232,6 +227,7 @@ void keyPressed() {
       // attetion do not know if that the right way of doing it
      radomMode = !radomMode;
     } else if (key == 'c') {
+      background(backgroundColor);
       boidColor = color(random(1, 255), random(1, 255), random(1, 255));
       tailColor = color(random(1, 255), random(1, 255), random(1, 255));
     } else {
@@ -240,7 +236,7 @@ void keyPressed() {
 }
 // Add a new boid into the System
 void mousePressed() {
-  for (int i=0; i < 40; i++) {
+  for (int i=0; i < sparnCount; i++) {
     flock.addBoid(new Boid(mouseX, mouseY));
     if (flock.amount() > amount) {
       flock.deleteBoid();
