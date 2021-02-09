@@ -27,7 +27,7 @@ color boidColor = color(200);
 color tailColor = color(255, 0, 255);
 //color boidColor = color(0, 0, 0);
 //color tailColor = color(0, 0, 0);
-color backgroundColor = color(255, 255, 255);
+color backgroundColor = color(0);// color(255, 255, 255);
 
 boolean display = true;
 boolean sparn = true;
@@ -45,7 +45,7 @@ void settings() {
 
 void setup() {
    frameRate(60);
-  
+   
   // size(1920,1080, P3D);
 
   flock = new Flock();
@@ -56,8 +56,8 @@ void setup() {
 }
 
 void draw() {
-  background(0);
-
+  
+  background(backgroundColor);
   
   // Show the image
   if (display) {
@@ -238,7 +238,8 @@ void keyPressed() {
 void mousePressed() {
   for (int i=0; i < sparnCount; i++) {
     flock.addBoid(new Boid(mouseX, mouseY));
-    if (flock.amount() > amount) {
+    println(amount);
+    while (flock.amount() > amount) {
       flock.deleteBoid();
     }
   }
