@@ -1,6 +1,10 @@
 import org.openkinect.processing.*;
+// Serial Libary for communication between esp and computer
+import processing.serial.*;
 
 Flock flock;
+
+Serial port;
 
 boolean linux = true;
 // int screenX = 1440;
@@ -40,7 +44,8 @@ void settings() {
     System.setProperty("jogl.disable.openglcore", "true");
   }
 
- fullScreen(P3D);
+ //fullScreen(P3D);
+ size(500, 500, P3D);
 }
 
 void setup() {
@@ -53,9 +58,22 @@ void setup() {
   for (int i = 0; i < 1; i++) {
     flock.addBoid(new Boid(width/2, height/2));
   }
+  
+  // print all available serial ports
+  printArray(Serial.list());
+  
+  // Create connection on port specified with esp
+  port = new Serial(this, "/dev/cu.usbserial-0001", 9600);
 }
 
 void draw() {
+  
+  // print serial input
+  while (port.available() > 0) {
+    port.buffer(3);
+    int inByte = port.read();
+    println(inByte);
+  }
   
   background(backgroundColor);
   
@@ -106,45 +124,6 @@ void draw() {
       }
     }
   }
-  // if(millis() > timer + 1000 && radomMode){
-  //  if(states[0] == 1 && speedAuto >= 1){
-  //     for (Boid b : boids) {
-  //      b.maxspeed += 1;
-  //    }
-      
-  //    speedAuto -= 1;
-  //  }
-  //  if(states[0] == 0 && speedAuto >= 1){
-  //     for (Boid b : boids) {
-  //      b.maxspeed -= 1;
-  //    }
-      
-  //    speedAuto -= 1;
-  //  }
-  //  if(states[1] == 1 && weightAuto >= 1){
-  //     for (Boid b : boids) {
-  //      b.maxforce += 0.10;
-  //    }
-      
-  //    weightAuto -= 1;
-  //  }
-  //  if(states[1] == 0 && weightAuto >= 1){
-  //     for (Boid b : boids) {
-  //      b.maxforce -= 0.10;
-  //    }
-      
-  //    weightAuto -= 1;
-  //  }
-  //  if(states[2] == 1 && schwanzAuto >= 1){
-  //    schwanz += 2;
-  //    schwanzAuto -= 1;
-  //  }
-  //  if(states[2] == 0 && schwanzAuto >= 1){
-  //    schwanz -= 2;
-  //    schwanzAuto -= 1;
-  //  }
-  //  timer = millis();
-  //}
 
   flock.run();
 }
