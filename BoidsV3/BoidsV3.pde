@@ -1,5 +1,7 @@
 import org.openkinect.processing.*;
+import processing.serial.*;
 
+Serial myPort;  
 Flock flock;
 
 boolean linux = true;
@@ -21,6 +23,7 @@ int[] states;
 int timer;
 int timer2;
 boolean radomMode = false;
+boolean ArduinoMode = false;
 // End autoMode requirements
 
 color boidColor = color(200);
@@ -33,7 +36,9 @@ boolean display = true;
 boolean sparn = true;
 int sparnCount = 40;
 ArrayList<Boid> boids;
-
+int avr = 0;
+int avrCounter = 0;
+String sensors = "";
 void settings() {
   if(linux)
   {
@@ -45,9 +50,10 @@ void settings() {
 
 void setup() {
    frameRate(60);
-   
+   printArray(Serial.list());
+  // Open the port you are using at the rate you want:
+   myPort = new Serial(this, Serial.list()[32], 9600);
   // size(1920,1080, P3D);
-
   flock = new Flock();
   // Add an initial set of boids into the system
   for (int i = 0; i < 1; i++) {
@@ -59,6 +65,50 @@ void draw() {
   
   background(backgroundColor);
   
+  if(ArduinoMode){
+     // while (myPort.available() > 0) {
+     //inByte = myPort.read();
+     int sensor = 0;
+     byte[] Tx_Data = new byte[2];
+
+      while (myPort.available() > 0) {
+          Tx_Data = myPort.readBytes();
+        
+      }
+ 
+    //   if ( myPort.available() > 0) 
+   //    {  // If data is available,
+    //   sensor  = Integer.parseInt( myPort.readStringUntil('\n'));         // read it and store it in val
+     //   } 
+    if(Tx_Data != null && Tx_Data.length > 2){
+      
+      sensor = Tx_Data[1];
+       if(sensor <= 50 && sensor != 0){
+                   print(Tx_Data[1]  );
+     avr += sensor;
+     avrCounter ++;
+     if(avrCounter >= 5){
+       println((avr/avrCounter));
+    
+      
+      speedAuto  = int(map(Tx_Data[1],0,50,50,0));
+      boidspeed = int(map(Tx_Data[1],0,50,50,0));
+        avrCounter = 0;
+        avr = 0;
+      for (Boid b : boids) {
+      b.maxspeed = speedAuto;
+      }
+
+    }
+    }
+     }
+    
+    
+    
+
+   
+    }
+   
   // Show the image
   if (display) {
    
@@ -80,6 +130,7 @@ void draw() {
   //  println("wert",Math.round(map(v1.z,500,tracker.getThreshold(),6,0)));
  
   // if this mode is enabled, the boids are getting radoms specs
+  
   if(millis() > timer + 5000 && radomMode){
     speedAuto = int(random(1 , 5));
     weightAuto = random(-1.5 , 0.7);
@@ -222,6 +273,9 @@ void keyPressed() {
       weight = 0.20;
       schwanz = 20;
       boids.clear();
+    }
+     else if (key == 's') {
+      ArduinoMode  = !ArduinoMode;
     }
     else if (key == 'a') {
       // attetion do not know if that the right way of doing it
