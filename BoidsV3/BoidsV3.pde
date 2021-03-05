@@ -69,35 +69,34 @@ void draw() {
      // while (myPort.available() > 0) {
      //inByte = myPort.read();
      int sensor = 0;
-     byte[] Tx_Data = new byte[4];
+     byte[] Tx_Data = new byte[6];
 
-      while (myPort.available() > 0) {
-          
-          int lf = 1;
-          // Expand array size to the number of bytes you e  xpect:
-       
-          myPort.readBytesUntil(lf, Tx_Data);
-        
-      }
+    
+ 
+      while (myPort.available () >= Tx_Data.length) {
+        myPort.readBytes(Tx_Data);
+        if (Tx_Data != null) {
+         // println(Tx_Data);
+        }
+  }
  
     //   if ( myPort.available() > 0) 
    //    {  // If data is available,
     //   sensor  = Integer.parseInt( myPort.readStringUntil('\n'));         // read it and store it in val
      //   } 
-    if(Tx_Data != null && Tx_Data.length > 4){
-      print("Sensor:",str(Tx_Data[0]),str(Tx_Data[1]),str(Tx_Data[2]),str(Tx_Data[3]));
+     
+ 
+    if(Tx_Data != null && Tx_Data.length >= 6){
+      println("Sensor:",str(Tx_Data[0]),str(Tx_Data[1]),str(Tx_Data[2]),str(Tx_Data[3]),str(Tx_Data[4]),str(Tx_Data[5]));
       sensor = Tx_Data[1];
        if(sensor <= 50 && sensor != 0){
-                   print(Tx_Data[1]  );
-     avr += sensor;
-     avrCounter ++;
-     
       
-      speedAuto  = int(map(Tx_Data[1],0,50,20,0));
-      boidspeed = int(map(Tx_Data[1],0,50,20,0));
-
+       //speedAuto  = int(map(Tx_Data[1],0,50,15,0));
+        weight = (map(Tx_Data[1], 0,50,-10,10))/10;
+       // schwanz = int(map(Tx_Data[1],0,50,-10,300));
       for (Boid b : boids) {
-      b.maxspeed = speedAuto;
+      // b.maxspeed = speedAuto;
+      b.maxforce  =  weight;
       
 
     }
@@ -419,8 +418,12 @@ class Boid {
 
     trail.add(new PVector(position.x, position.y));
     // cut tail if size is to long
-    if (trail.size() > schwanz) {
-      trail.remove(0);
+     if(trail.size() > schwanz) {
+      int dif = trail.size() /  schwanz;
+      for(int i = 0;i < int(dif); i++){
+         trail.remove(0);
+      }
+       
     }
     //draw tail
     drawTail(trail);
