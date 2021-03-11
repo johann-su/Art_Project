@@ -52,7 +52,7 @@ void setup() {
    frameRate(60);
    printArray(Serial.list());
   // Open the port you are using at the rate you want:
-   myPort = new Serial(this, Serial.list()[32], 9600);
+   myPort = new Serial(this, Serial.list()[0], 9600);
   // size(1920,1080, P3D);
   flock = new Flock();
   // Add an initial set of boids into the system
@@ -89,18 +89,45 @@ void draw() {
     if(Tx_Data != null && Tx_Data.length >= 6){
       println("Sensor:",str(Tx_Data[0]),str(Tx_Data[1]),str(Tx_Data[2]),str(Tx_Data[3]),str(Tx_Data[4]),str(Tx_Data[5]));
       sensor = Tx_Data[1];
-       if(sensor <= 50 && sensor != 0){
+    
+      if(Tx_Data[0] <= 50 && Tx_Data[0] != 0){
+         weight = (map(Tx_Data[0], 0,50,-10,10))/10;
+         for (Boid b : boids) {
+              b.maxforce  =  weight;
+         }
+      }
+      if(Tx_Data[1] <= 50 && Tx_Data[1] != 0){
+         weight = (map(Tx_Data[1], 0,50,-10,10))/10;
+         for (Boid b : boids) {
+              b.maxforce  =  weight;
+         } 
+    }
+      if(Tx_Data[2] <= 50 && Tx_Data[2] != 0){
+         speedAuto  = int(map(Tx_Data[2],0,50,15,0));
+      }
+      if(Tx_Data[3] <= 50 && Tx_Data[3] != 0){
+        speedAuto  = int(map(Tx_Data[3],0,50,15,0));
+      }
+       if(Tx_Data[4] <= 50 && Tx_Data[4] != 0){
+        schwanz = int(map(Tx_Data[4],0,50,-10,200));
+      }
+       if(Tx_Data[5] <= 50 && Tx_Data[5] != 0){
+        schwanz = int(map(Tx_Data[5],0,50,-10,200));
+      }
+      
+      
+      // if(sensor <= 50 && sensor != 0){
       
        //speedAuto  = int(map(Tx_Data[1],0,50,15,0));
-        weight = (map(Tx_Data[1], 0,50,-10,10))/10;
+       // weight = (map(Tx_Data[1], 0,50,-10,10))/10;
        // schwanz = int(map(Tx_Data[1],0,50,-10,300));
-      for (Boid b : boids) {
+      //for (Boid b : boids) {
       // b.maxspeed = speedAuto;
-      b.maxforce  =  weight;
+     // b.maxforce  =  weight;
       
 
-    }
-    }
+   // }
+    //}
      }
     
     
