@@ -104,9 +104,15 @@ void draw() {
     }
       if(Tx_Data[2] <= 50 && Tx_Data[2] != 0){
          speedAuto  = int(map(Tx_Data[2],0,50,15,0));
+         for (Boid b : boids) {
+              b.maxspeed  =  speedAuto;
+         } 
       }
       if(Tx_Data[3] <= 50 && Tx_Data[3] != 0){
         speedAuto  = int(map(Tx_Data[3],0,50,15,0));
+        for (Boid b : boids) {
+              b.maxspeed  =  speedAuto;
+         } 
       }
        if(Tx_Data[4] <= 50 && Tx_Data[4] != 0){
         schwanz = int(map(Tx_Data[4],0,50,-10,200));
