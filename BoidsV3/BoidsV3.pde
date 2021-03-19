@@ -146,13 +146,13 @@ void draw() {
   if (display) {
    
     fill(0, 255, 255);
-    text(frameRate, screenX-70, 75, 100);
-    text("size: " + size, screenX-70, 95, 100);
-    text("speed: " + boidspeed, screenX-70, 115, 100);
-    text("weight: " + weight, screenX-70, 135, 100);
-    text("tail: " + schwanz, screenX-70, 155, 100);
-    text("total: " + boids.size(), screenX-70, 175, 100);
-    text("sparn: " + sparnCount, screenX-70, 195, 100);
+    text(frameRate, 100, 75, 100);
+    text("size: " + size, 100, 95, 100);
+    text("speed: " + boidspeed, 100, 115, 100);
+    text("weight: " + weight, 100, 135, 100);
+    text("tail: " + schwanz, 100, 155, 100);
+    text("total: " + boids.size(), 100, 175, 100);
+    text("sparn: " + sparnCount, 100, 195, 100);
   }
   
 
