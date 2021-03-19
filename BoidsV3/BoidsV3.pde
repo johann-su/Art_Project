@@ -52,7 +52,7 @@ void setup() {
    frameRate(60);
    printArray(Serial.list());
   // Open the port you are using at the rate you want:
-   myPort = new Serial(this, Serial.list()[0], 9600);
+   myPort = new Serial(this, Serial.list()[11], 9600);
   // size(1920,1080, P3D);
   flock = new Flock();
   // Add an initial set of boids into the system
@@ -103,13 +103,13 @@ void draw() {
          } 
     }
       if(Tx_Data[2] <= 50 && Tx_Data[2] != 0){
-         speedAuto  = int(map(Tx_Data[2],0,50,15,0));
+         speedAuto  = int(map(Tx_Data[2],0,50,15,1));
          for (Boid b : boids) {
               b.maxspeed  =  speedAuto;
          } 
       }
       if(Tx_Data[3] <= 50 && Tx_Data[3] != 0){
-        speedAuto  = int(map(Tx_Data[3],0,50,15,0));
+        speedAuto  = int(map(Tx_Data[3],0,50,15,1));
         for (Boid b : boids) {
               b.maxspeed  =  speedAuto;
          } 
